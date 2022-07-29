@@ -1,0 +1,123 @@
+# 公共垃圾箱
+PublicDustbin:
+  # 是否开启公共垃圾箱(true为开启，false为关闭)
+  Enable: true
+  # 公共垃圾箱名称
+  Name: "&b你打开了&c&l末世风暴"
+  # 垃圾箱大小
+  Size: 54
+  # 自动清理垃圾箱间隔
+  # 当垃圾被清理x次后就开始清理垃圾箱
+  ClearInterval: 4
+  # 垃圾白名单
+  # 如果垃圾的名称包含在下方列表则不放进垃圾箱(例如防qs插件的悬浮物)
+  WhiteListName:
+    - "§q§s"
+  # 公共垃圾箱提示
+  Message:
+    # 公共垃圾箱增加物品的提示
+    Reminder: '&3&l[公共垃圾箱] &a垃圾箱突然多出 &e%amount% &a件垃圾&7(打开垃圾箱指令: /citem open" )'
+    # 清理公共垃圾箱的提示
+    Clear: "&3&l[公共垃圾箱] &a避免垃圾过多, 垃圾箱清理完毕!"
+
+
+# 私人垃圾箱
+# 玩家把物品放进垃圾箱后关闭GUI就会自动转移进公共垃圾箱
+# 当公共垃圾箱满了则会把私人垃圾箱多出的物品清除
+PrivateDustbin:
+  # 是否开启私人垃圾箱功能(true为开启，false为关闭)
+  Enable: true
+  # 垃圾箱名称
+  Name: "&3&l你的垃圾箱"
+  # 垃圾箱大小
+  Size: 27
+  # 垃圾白名单
+  # 如果垃圾的名称包含在下方列表则不放进垃圾箱(例如防qs插件的悬浮物)
+  WhiteListName:
+    - "§q§s"
+  # 如果垃圾的Lore包含在下方列表则不放进垃圾箱(例如绑定了玩家的物品)
+  WhiteListLore:
+    - "绑定"
+  # 私人垃圾箱提示
+  Message:
+    # 私人垃圾箱清理后的提示
+    Clear: "&3&l[你的垃圾箱] &a本次清理了 %clear% 件物品, 保留了 %preserve% 件物品."
+
+
+# 防丢弃功能
+Drop:
+  # 是否开启(true为开启，false为关闭)
+  # 开启后玩家需要输入指令解锁才能丢弃物品
+  Enable: false
+  # 玩家关闭防丢弃功能后多久恢复开启状态(秒)
+  Time: 300
+  # 防丢弃的提示
+  Message:
+    # 切换到开启防丢弃时的提示
+    Open: "&8[&7+&8] &7已开启防丢弃功能，接下来你不能直接把物品扔出来(如想关闭输入/citem drop)"
+    # 切换到关闭防丢弃时的提示
+    Close: "&8[&7-&8] &7已关闭防丢弃功能，接下来你可以直接把物品扔出来(如想开启输入/citem drop)"
+    # 开启防丢弃后如果丢出物品的提示
+    DiscardInOpen: "&8[&3?&8] &7如果想丢弃物品，请输入/citem drop进行解锁"
+
+# 清理垃圾
+ClearItem:
+  # 异步清理垃圾检测周期 (秒)
+  Time: 60
+  # 当一块大小为 16*32*16 的区域掉落物数量达到进行清理
+  # 请根据你服务器的情况设置，设置太低可能会导致玩家物品的物品被清理
+  ChunkMaxItems: 500
+  # 白名单物品，仅支持Type
+  # 可使用指令/citem type查询手上物品的Type
+  WhiteList:
+    - "EXTRABOTANY_GAIATABLET"
+    - "BOTANIA_MANATABLET"
+    - "APPLIEDENERGISTICS2_ITEMITEMCRYSTALSEED"
+    - "BEACON"
+    - "BOTANIA_MANARINGGREATER"
+    - "THAUMCRAFT_ITEMELDRITCHOBJECT"
+    - "BOTANIA_TERRAPICK"
+  # 是否清理展示框
+  ItemFrame: false
+  # 是否清理船
+  Boat: false
+  # 是否清理经验球
+  ExpBall: true
+  # 是否清理正在坠落的方块
+  FallingBlock: true
+  # 是否清理画
+  Painting: false
+  # 是否清理矿车
+  Minecart: false
+  # 是否清理箭头
+  Arrow: true
+  # 是否清理雪球
+  Snowball: true
+  # 清理垃圾提示
+  Message:
+    # 清理垃圾前的提示
+    ClearPre: "&c[警告] &6风暴将会在 &e%time%秒 &6后经过，请及时捡起掉落物!"
+    # 开始清理垃圾时的提示
+    ClearStart: "&c[警告] &6风暴正在经过，请保管好您的贵重物品，注意安全!"
+    # 清理完全部地图垃圾后的提示信息
+    Clear: "&d[提示] &6本次风暴共卷走了 &e%count% &6件掉落物."
+    # 当每清理完毕一个地图后的提示信息
+    ClearWorld: "&d[提示] &6地图 &e%world% &6被风暴卷走了 &e%count% &6件掉落物."
+    # 当一个区块掉落物超额时的清理提示(会受到垃圾白名单影响)
+    ClearChunkMaxItems: "&4[警告] &b世界：%world%  &e坐标：%X% %Y% %Z%  &4附近出现大量掉落物，系统清理完毕&d(请勿乱扔垃圾)"
+
+
+# 清理垃圾提示方式
+CleaningTips:
+  # 是否开启分地图提示
+  # true表示统计全部地图的垃圾总和，只显示全部地图清理了多少垃圾
+  # false表示分地图提示，每个有垃圾的地图都会提示清理了多少垃圾
+  Enable: false
+  # 每个世界的别名，如果不希望清理垃圾的时候显示的是英文世界名称可以在下方添加或修改
+  WorldAlias:
+    world: 主世界
+    DIM1: 末地
+    DIM-1: 地狱
+    zc: 主城
+    sc: 生存世界
+    dp: 地皮世界
