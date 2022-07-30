@@ -1,27 +1,34 @@
 package com.mcsyr.clearitem;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
+
   public static Main plugin;
   
   public static FileConfiguration Config;
   
-  public static Boolean DustbinLock = Boolean.valueOf(false);
-  
+  public static Boolean DustbinLock = Boolean.FALSE;
+
+  public static String PublicDustbinPrePageName;
+
+  public static String PublicDustbinNextPageName;
+
+  public static String PublicDustbinPrePageDes;
+
+  public static String PublicDustbinNextPageDes;
   public static int DustbinCount = 0;
   
   public static Boolean PublicDustbinEnable;
-  
+
+  public static String PublicDustbinAction;
+
   public static String PublicDustbinName;
   
   public static Integer PublicDustbinSize;
@@ -31,6 +38,10 @@ public class Main extends JavaPlugin {
   public static List<String> PublicDustbinWhiteListName;
   
   public static String PublicDustbinMessageReminder;
+
+  public static String PublicDustbinMessageButton;
+
+  public static String PublicDustbinMessageInfo;
   
   public static String PublicDustbinMessageClear;
   
@@ -90,17 +101,19 @@ public class Main extends JavaPlugin {
   
   public static Boolean CleaningTipsEnable;
   
-  public static Integer time = Integer.valueOf(0);
+  public static Integer time = 0;
   
-  public static Integer WasteTotal = Integer.valueOf(0);
+  public static Integer WasteTotal = 0;
   
-  public static Integer DustbinClearFrequency = Integer.valueOf(0);
+  public static Integer DustbinClearFrequency = 0;
   
   public static Map<Player, Boolean> PlayerDropLock = new HashMap<>();
   
   public static Map<Player, Date> PlayerDropLockTime = new HashMap<>();
   
   public static Map<Player, Inventory> PlayerPrivateDustbin = new HashMap<>();
+
+  public static String Version = "3.1.1";
 
   public Main() {
   }
@@ -109,9 +122,8 @@ public class Main extends JavaPlugin {
     plugin = this;
     this.saveDefaultConfig();
     Bukkit.getServer().getConsoleSender().sendMessage("§b[ClearItem] 异步清理垃圾 插件启动");
-    Bukkit.getServer().getConsoleSender().sendMessage("§b[ClearItem] By QQ2032704270");
     Bukkit.getPluginManager().registerEvents(new Event(), this);
-    Bukkit.getPluginCommand("clearitem").setExecutor(new command());
+    Objects.requireNonNull(Bukkit.getPluginCommand("clearitem")).setExecutor(new command());
     loadConfig();
     tools.Scheduler();
     tools.TraversePlayer();
@@ -121,23 +133,30 @@ public class Main extends JavaPlugin {
     plugin.reloadConfig();
     Config = plugin.getConfig();
     PublicDustbinEnable = Config.getBoolean("PublicDustbin.Enable");
-    PublicDustbinName = Config.getString("PublicDustbin.Name").replaceAll("&", "§");
+    PublicDustbinPrePageName = Objects.requireNonNull(Config.getString("PublicDustbin.PrePageName")).replaceAll("&", "§");
+    PublicDustbinPrePageDes = Objects.requireNonNull(Config.getString("PublicDustbin.PrePageDes")).replaceAll("&", "§");
+    PublicDustbinNextPageName = Objects.requireNonNull(Config.getString("PublicDustbin.NextPageName")).replaceAll("&", "§");
+    PublicDustbinNextPageDes = Objects.requireNonNull(Config.getString("PublicDustbin.NextPageDes")).replaceAll("&", "§");
+    PublicDustbinAction = Objects.requireNonNull(Config.getString("PublicDustbin.Action")).replaceAll("&", "§");
+    PublicDustbinName = Objects.requireNonNull(Config.getString("PublicDustbin.Name")).replaceAll("&", "§");
     PublicDustbinSize = Config.getInt("PublicDustbin.Size");
     PublicDustbinClearInterval = Config.getInt("PublicDustbin.ClearInterval");
     PublicDustbinWhiteListName = Config.getStringList("PublicDustbin.WhiteListName");
-    PublicDustbinMessageReminder = Config.getString("PublicDustbin.Message.Reminder").replaceAll("&", "§");
-    PublicDustbinMessageClear = Config.getString("PublicDustbin.Message.Clear").replaceAll("&", "§");
+    PublicDustbinMessageReminder = Objects.requireNonNull(Config.getString("PublicDustbin.Message.Reminder")).replaceAll("&", "§");
+    PublicDustbinMessageButton = Objects.requireNonNull(Config.getString("PublicDustbin.Message.Button")).replaceAll("&", "§");
+    PublicDustbinMessageInfo = Objects.requireNonNull(Config.getString("PublicDustbin.Message.ButtonInfo")).replaceAll("&", "§");
+    PublicDustbinMessageClear = Objects.requireNonNull(Config.getString("PublicDustbin.Message.Clear")).replaceAll("&", "§");
     PrivateDustbinEnable = Config.getBoolean("PrivateDustbin.Enable");
-    PrivateDustbinName = Config.getString("PrivateDustbin.Name").replaceAll("&", "§");
+    PrivateDustbinName = Objects.requireNonNull(Config.getString("PrivateDustbin.Name")).replaceAll("&", "§");
     PrivateDustbinSize = Config.getInt("PrivateDustbin.Size");
     PrivateDustbinWhiteListName = Config.getStringList("PrivateDustbin.WhiteListName");
     PrivateDustbinWhiteListLore = Config.getStringList("PrivateDustbin.WhiteListLore");
-    PrivateDustbinMessageClear = Config.getString("PrivateDustbin.Message.Clear").replaceAll("&", "§");
+    PrivateDustbinMessageClear = Objects.requireNonNull(Config.getString("PrivateDustbin.Message.Clear")).replaceAll("&", "§");
     DropEnable = Config.getBoolean("Drop.Enable");
     DropTime = Config.getInt("Drop.Time") * 1000;
-    DropMessageOpen = Config.getString("Drop.Message.Open").replaceAll("&", "§");
-    DropMessageClose = Config.getString("Drop.Message.Close").replaceAll("&", "§");
-    DropMessageDiscardInOpen = Config.getString("Drop.Message.DiscardInOpen").replaceAll("&", "§");
+    DropMessageOpen = Objects.requireNonNull(Config.getString("Drop.Message.Open")).replaceAll("&", "§");
+    DropMessageClose = Objects.requireNonNull(Config.getString("Drop.Message.Close")).replaceAll("&", "§");
+    DropMessageDiscardInOpen = Objects.requireNonNull(Config.getString("Drop.Message.DiscardInOpen")).replaceAll("&", "§");
     ClearItemTime = Config.getInt("ClearItem.Time");
     ClearItemChunkMaxItems = Config.getInt("ClearItem.ChunkMaxItems");
     ClearItemWhiteList = Config.getStringList("ClearItem.WhiteList");
@@ -149,11 +168,11 @@ public class Main extends JavaPlugin {
     ClearItemMinecart = Config.getBoolean("ClearItem.Minecart");
     ClearItemArrow = Config.getBoolean("ClearItem.Arrow");
     ClearItemSnowball = Config.getBoolean("ClearItem.Snowball");
-    ClearItemMessageClearPre = Config.getString("ClearItem.Message.ClearPre").replaceAll("&", "§");
-    ClearItemMessageClearStart = Config.getString("ClearItem.Message.ClearStart").replaceAll("&", "§");
-    ClearItemMessageClear = Config.getString("ClearItem.Message.Clear").replaceAll("&", "§");
-    ClearItemMessageClearWorld = Config.getString("ClearItem.Message.ClearWorld").replaceAll("&", "§");
-    ClearItemMessageClearChunkMaxItems = Config.getString("ClearItem.Message.ClearChunkMaxItems").replaceAll("&", "§");
+    ClearItemMessageClearPre = Objects.requireNonNull(Config.getString("ClearItem.Message.ClearPre")).replaceAll("&", "§");
+    ClearItemMessageClearStart = Objects.requireNonNull(Config.getString("ClearItem.Message.ClearStart")).replaceAll("&", "§");
+    ClearItemMessageClear = Objects.requireNonNull(Config.getString("ClearItem.Message.Clear")).replaceAll("&", "§");
+    ClearItemMessageClearWorld = Objects.requireNonNull(Config.getString("ClearItem.Message.ClearWorld")).replaceAll("&", "§");
+    ClearItemMessageClearChunkMaxItems = Objects.requireNonNull(Config.getString("ClearItem.Message.ClearChunkMaxItems")).replaceAll("&", "§");
     CleaningTipsEnable = Config.getBoolean("CleaningTips.Enable");
   }
 }

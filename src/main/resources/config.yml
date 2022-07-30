@@ -2,10 +2,20 @@
 PublicDustbin:
   # 是否开启公共垃圾箱(true为开启，false为关闭)
   Enable: true
+  # 打开公共垃圾桶的动作
+  Action: "&b打开了"
   # 公共垃圾箱名称
-  Name: "&b你打开了&c&l末世风暴"
-  # 垃圾箱大小
-  Size: 54
+  Name: "&c&l公共垃圾桶"
+  # 垃圾箱大小(必须是9的倍数)
+  Size: 135
+  # 上一页页码的文字
+  PrePageName: "&9上一页"
+  # 上一页页码的描述
+  PrePageDes: "&9点此上一页"
+  # 下一页页码的文字
+  NextPageName: "&9下一页"
+  # 下一页页码的描述
+  NextPageDes: "&9点此下一页"
   # 自动清理垃圾箱间隔
   # 当垃圾被清理x次后就开始清理垃圾箱
   ClearInterval: 4
@@ -16,7 +26,11 @@ PublicDustbin:
   # 公共垃圾箱提示
   Message:
     # 公共垃圾箱增加物品的提示
-    Reminder: '&3&l[公共垃圾箱] &a垃圾箱突然多出 &e%amount% &a件垃圾&7(打开垃圾箱指令: /citem open" )'
+    Reminder: '&3&l[公共垃圾箱] &a垃圾箱突然多出 &e%amount% &a件垃圾&7'
+    # 公共垃圾桶按钮的提示
+    Button: '&b[&e点此打开垃圾桶&b]'
+    # 按钮的提示
+    ButtonInfo: '这是个垃圾桶'
     # 清理公共垃圾箱的提示
     Clear: "&3&l[公共垃圾箱] &a避免垃圾过多, 垃圾箱清理完毕!"
 
@@ -28,9 +42,9 @@ PrivateDustbin:
   # 是否开启私人垃圾箱功能(true为开启，false为关闭)
   Enable: true
   # 垃圾箱名称
-  Name: "&3&l你的垃圾箱"
+  Name: "&3&l你的垃圾箱(丢弃后垃圾会自动转移进公共垃圾箱)"
   # 垃圾箱大小
-  Size: 27
+  Size: 54
   # 垃圾白名单
   # 如果垃圾的名称包含在下方列表则不放进垃圾箱(例如防qs插件的悬浮物)
   WhiteListName:
@@ -84,7 +98,7 @@ ClearItem:
   # 是否清理经验球
   ExpBall: true
   # 是否清理正在坠落的方块
-  FallingBlock: true
+  FallingBlock: false
   # 是否清理画
   Painting: false
   # 是否清理矿车
@@ -112,7 +126,7 @@ CleaningTips:
   # 是否开启分地图提示
   # true表示统计全部地图的垃圾总和，只显示全部地图清理了多少垃圾
   # false表示分地图提示，每个有垃圾的地图都会提示清理了多少垃圾
-  Enable: false
+  Enable: true
   # 每个世界的别名，如果不希望清理垃圾的时候显示的是英文世界名称可以在下方添加或修改
   WorldAlias:
     world: 主世界

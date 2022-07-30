@@ -1,8 +1,9 @@
 package com.mcsyr.clearitem;
 
 import java.text.DecimalFormat;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class Event implements Listener {
+
   public Event() {
   }
 
@@ -32,7 +34,7 @@ public class Event implements Listener {
           priority = EventPriority.HIGHEST
   )
   public void onPlayerDropItem(PlayerDropItemEvent event) {
-    if (Main.DropEnable && (Boolean)Main.PlayerDropLock.get(event.getPlayer())) {
+    if (Main.DropEnable && Main.PlayerDropLock.get(event.getPlayer())) {
       event.setCancelled(true);
       event.getPlayer().sendMessage(Main.DropMessageDiscardInOpen);
     }
@@ -44,20 +46,16 @@ public class Event implements Listener {
     List<Entity> Entities = event.getEntity().getNearbyEntities(16.0, 32.0, 16.0);
     if (Entities.size() >= Main.ClearItemChunkMaxItems) {
       List<LivingEntity> worldEntities = event.getEntity().getWorld().getLivingEntities();
-      Iterator var4 = Entities.iterator();
 
-      while(var4.hasNext()) {
-        Entity ent = (Entity)var4.next();
+      for (Entity ent : Entities) {
         tools.clearEntityItem(ent);
       }
 
       Player player = null;
-      Iterator var8 = worldEntities.iterator();
 
-      while(var8.hasNext()) {
-        Entity entity = (Entity)var8.next();
-        if (entity instanceof Player) {
-          player = (Player)entity;
+      for (LivingEntity worldEntity : worldEntities) {
+        if (worldEntity instanceof Player) {
+          player = (Player) worldEntity;
           break;
         }
       }
@@ -76,37 +74,40 @@ public class Event implements Listener {
   )
   public void onInventoryClick(InventoryClickEvent event) {
     ItemStack itemStack = event.getCurrentItem();
-    if (itemStack != null && itemStack.getType() != null && !"AIR".equals(itemStack.getType().name())) {
-      String Title = event.getView().getTitle();
-      if (Title.equals(Main.PublicDustbinName) && Main.DustbinLock) {
-        ((Player)event.getWhoClicked()).sendMessage(Main.PublicDustbinName + "垃圾箱已被锁住，请稍等1秒后操作...");
-        event.setCancelled(true);
-      } else if (Main.DropEnable && Title.equals(Main.PrivateDustbinName)) {
-        String name = itemStack.getItemMeta().getDisplayName();
-        if (tools.isIncludedString(Main.PrivateDustbinWhiteListName, name)) {
+    if (itemStack != null) {
+      itemStack.getType();
+      if (!"AIR".equals(itemStack.getType().name())) {
+        String Title = event.getView().getTitle();
+        if (Title.equals(Main.PublicDustbinName) && Main.DustbinLock) {
+          event.getWhoClicked().sendMessage(Main.PublicDustbinName + "垃圾箱已被锁住，请稍等1秒后操作...");
           event.setCancelled(true);
-        }
-
-        if (itemStack.getItemMeta() == null) {
-          return;
-        }
-
-        List<String> lores = itemStack.getItemMeta().getLore();
-        if (lores == null) {
-          return;
-        }
-
-        Iterator var6 = lores.iterator();
-
-        while(var6.hasNext()) {
-          String lore = (String)var6.next();
-          if (tools.isIncludedString(Main.PrivateDustbinWhiteListLore, lore)) {
+        } else if (Main.DropEnable && Title.equals(Main.PrivateDustbinName)) {
+          String name = Objects.requireNonNull(itemStack.getItemMeta()).getDisplayName();
+          if (tools.isIncludedString(Main.PrivateDustbinWhiteListName, name)) {
             event.setCancelled(true);
+          }
+
+          if (itemStack.getItemMeta() == null) {
             return;
           }
+
+          List<String> lores = itemStack.getItemMeta().getLore();
+          if (lores == null) {
+            return;
+          }
+
+          for (String lore : lores) {
+            if (tools.isIncludedString(Main.PrivateDustbinWhiteListLore, lore)) {
+              event.setCancelled(true);
+              return;
+            }
+          }
+//          TODO 添加上下页操作
+        }
+        else {
+          onPageClick(event);
         }
       }
-
     }
   }
 
@@ -114,15 +115,15 @@ public class Event implements Listener {
   public void onInventoryClose(InventoryCloseEvent event) {
     if (Main.PrivateDustbinEnable && event.getView().getTitle().equals(Main.PrivateDustbinName)) {
       Player player = (Player)event.getPlayer();
-      Inventory inventory = (Inventory)Main.PlayerPrivateDustbin.get(player);
+      Inventory inventory = Main.PlayerPrivateDustbin.get(player);
       ItemStack[] itemStacks = inventory.getContents();
       int clear = 0;
       int preserve = 0;
 
-      for(int i = 0; i < itemStacks.length; ++i) {
-        if (itemStacks[i] != null) {
-          if (Dustbin.addItem(itemStacks[i])) {
-            inventory.remove(itemStacks[i]);
+      for (ItemStack itemStack : itemStacks) {
+        if (itemStack != null) {
+          if (Dustbin.addItem(itemStack)) {
+            inventory.remove(itemStack);
             ++clear;
           } else {
             ++preserve;
@@ -135,5 +136,30 @@ public class Event implements Listener {
       }
     }
 
+  }
+
+//  上下页(标题相同)
+  public void onPageClick(InventoryClickEvent event){
+    if(event.getView().getTitle().startsWith(Main.PublicDustbinName)){
+      if(event.getCurrentItem().getItemMeta().getDisplayName().equals(Main.PublicDustbinPrePageName)){
+        event.setCancelled(true);
+        int count=Integer.parseInt(event.getView().getTitle().substring(event.getView().getTitle().length()-2,event.getView().getTitle().length()-1))-1;
+        if(count>0){
+          count--;
+        }
+        Player player = (Player) event.getWhoClicked();
+        player.closeInventory();
+        player.openInventory(Dustbin.DustbinList.get(count));
+      }else if(event.getCurrentItem().getItemMeta().getDisplayName().equals(Main.PublicDustbinNextPageName)){
+        event.setCancelled(true);
+        int count=Integer.parseInt(event.getView().getTitle().substring(event.getView().getTitle().length()-2,event.getView().getTitle().length()-1))-1;
+        if(count<Dustbin.DustbinList.size()-1){
+          count++;
+        }
+        Player player = (Player) event.getWhoClicked();
+        player.closeInventory();
+        player.openInventory(Dustbin.DustbinList.get(count));
+      }
+    }
   }
 }

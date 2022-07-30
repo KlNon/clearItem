@@ -1,23 +1,25 @@
 package com.mcsyr.clearitem;
 
 import java.util.Date;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 public class command implements CommandExecutor {
-  public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+  public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
     if (sender instanceof Player) {
       if (args.length == 1) {
         Player player = (Player)sender;
         if (args[0].equalsIgnoreCase("open")) {
           if (Main.PublicDustbinEnable) {
-            ((Player)sender).openInventory(Dustbin.Dustbin);
-            sender.sendMessage("打开了" + Main.PublicDustbinName);
+
+            ((Player)sender).openInventory(Dustbin.DustbinList.get(0));
+            sender.sendMessage(Main.PublicDustbinAction + Main.PublicDustbinName);
           } else {
-            sender.sendMessage(Main.PublicDustbinName + "公共垃圾箱已被服务器禁用!");
+            sender.sendMessage( "公共垃圾箱已被服务器禁用!");
           }
 
           return true;
@@ -25,7 +27,7 @@ public class command implements CommandExecutor {
 
         if (args[0].equalsIgnoreCase("drop")) {
           if (Main.DropEnable) {
-            if ((Boolean)Main.PlayerDropLock.get(player)) {
+            if (Main.PlayerDropLock.get(player)) {
               Main.PlayerDropLock.put(player, false);
               Main.PlayerDropLockTime.put(player, new Date());
               player.sendMessage(Main.DropMessageClose);
@@ -42,10 +44,10 @@ public class command implements CommandExecutor {
 
         if (args[0].equalsIgnoreCase("discard")) {
           if (Main.PrivateDustbinEnable) {
-            player.openInventory((Inventory)Main.PlayerPrivateDustbin.get(player));
+            player.openInventory(Main.PlayerPrivateDustbin.get(player));
             sender.sendMessage("打开了" + Main.PrivateDustbinName);
           } else {
-            sender.sendMessage(Main.PrivateDustbinName + "私人垃圾箱已被服务器禁用!");
+            sender.sendMessage("私人垃圾箱已被服务器禁用!");
           }
 
           return true;
@@ -78,6 +80,9 @@ public class command implements CommandExecutor {
 
     return false;
   }
+
+
+
   private void showHelp(CommandSender sender) {
     sender.sendMessage("§7======================" + Main.PublicDustbinName + "§7======================");
     sender.sendMessage("§7");
@@ -99,6 +104,6 @@ public class command implements CommandExecutor {
       sender.sendMessage("§7");
     }
 
-    sender.sendMessage("§7======================" + Main.PublicDustbinName + "§7======================");
+    sender.sendMessage("§7======================§b" + Main.Version + "§7======================");
   }
 }

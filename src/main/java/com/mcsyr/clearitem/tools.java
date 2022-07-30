@@ -8,6 +8,9 @@ package com.mcsyr.clearitem;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Arrow;
@@ -21,6 +24,8 @@ import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class tools {
   public tools() {
@@ -49,11 +54,11 @@ public class tools {
   }
   public static void CheckPlayerDropLock() {
     long date = (new Date()).getTime();
-    long playerDate = 0L;
+    long playerDate;
 
     for (Player player : Bukkit.getServer().getOnlinePlayers()) {
       if (!(Boolean) Main.PlayerDropLock.get(player)) {
-        playerDate = ((Date) Main.PlayerDropLockTime.get(player)).getTime();
+        playerDate = Main.PlayerDropLockTime.get(player).getTime();
         if (date - playerDate > (long) Main.DropTime) {
           Main.PlayerDropLock.put(player, true);
           player.sendMessage(Main.DropMessageOpen);
@@ -75,69 +80,72 @@ public class tools {
     int count = 0;
     int DustbinCount = 0;
     List<Entity> Entities = world.getEntities();
-    Iterator var5 = Entities.iterator();
 
-    while(true) {
-      while(var5.hasNext()) {
-        Entity ent = (Entity)var5.next();
-        if (ent instanceof Item) {
-          Item item = (Item)ent;
-          if (!Main.ClearItemWhiteList.contains(item.getItemStack().getType().name())) {
-            if (Dustbin.addItem(item.getItemStack())) {
-              ++DustbinCount;
-            }
+    Dustbin.page();
 
-            ++count;
-            ent.remove();
+    for (Entity ent : Entities) {
+      if (ent instanceof Item) {
+        Item item = (Item) ent;
+        if (!Main.ClearItemWhiteList.contains(item.getItemStack().getType().name())) {
+          if (Dustbin.addItem(item.getItemStack())) {
+            ++DustbinCount;
           }
-        } else if (ent instanceof ItemFrame && Main.ClearItemItemFrame) {
-          ++count;
-          ent.remove();
-        } else if (ent instanceof Boat && Main.ClearItemBoat) {
-          ++count;
-          ent.remove();
-        } else if (ent instanceof ExperienceOrb && Main.ClearItemExpBall) {
-          ++count;
-          ent.remove();
-        } else if (ent instanceof FallingBlock && Main.ClearItemFallingBlock) {
-          ++count;
-          ent.remove();
-        } else if (ent instanceof Painting && Main.ClearItemPainting) {
-          ++count;
-          ent.remove();
-        } else if (ent instanceof Minecart && Main.ClearItemMinecart) {
-          ++count;
-          ent.remove();
-        } else if (ent instanceof Arrow && Main.ClearItemArrow) {
-          ++count;
-          ent.remove();
-        } else if (ent instanceof Snowball && Main.ClearItemSnowball) {
           ++count;
           ent.remove();
         }
+      } else if (ent instanceof ItemFrame && Main.ClearItemItemFrame) {
+        ++count;
+        ent.remove();
+      } else if (ent instanceof Boat && Main.ClearItemBoat) {
+        ++count;
+        ent.remove();
+      } else if (ent instanceof ExperienceOrb && Main.ClearItemExpBall) {
+        ++count;
+        ent.remove();
+      } else if (ent instanceof FallingBlock && Main.ClearItemFallingBlock) {
+        ++count;
+        ent.remove();
+      } else if (ent instanceof Painting && Main.ClearItemPainting) {
+        ++count;
+        ent.remove();
+      } else if (ent instanceof Minecart && Main.ClearItemMinecart) {
+        ++count;
+        ent.remove();
+      } else if (ent instanceof Arrow && Main.ClearItemArrow) {
+        ++count;
+        ent.remove();
+      } else if (ent instanceof Snowball && Main.ClearItemSnowball) {
+        ++count;
+        ent.remove();
       }
-
-      Main.DustbinCount += DustbinCount;
-      Main.WasteTotal = Main.WasteTotal + count;
-      if (!Main.CleaningTipsEnable && count > 0) {
-        Bukkit.getServer().broadcastMessage(Main.ClearItemMessageClearWorld.replaceAll("%world%", IncludeWorldAlias(world.getName())).replaceAll("%count%", String.valueOf(count)));
-      }
-
-      if (isDustbin) {
-        if (Main.PublicDustbinEnable) {
-          Bukkit.getServer().broadcastMessage(Main.PublicDustbinMessageReminder.replace("%amount%", String.valueOf(Main.DustbinCount)));
-        }
-
-        if (Main.CleaningTipsEnable) {
-          Bukkit.getServer().broadcastMessage(Main.ClearItemMessageClear.replaceAll("%count%", String.valueOf(Main.WasteTotal)));
-        }
-
-        Main.DustbinCount = 0;
-        Main.WasteTotal = 0;
-      }
-
-      return;
     }
+
+    Main.DustbinCount += DustbinCount;
+    Main.WasteTotal = Main.WasteTotal + count;
+    if (!Main.CleaningTipsEnable && count > 0) {
+      Bukkit.getServer().broadcastMessage(Main.ClearItemMessageClearWorld.replaceAll("%world%", IncludeWorldAlias(world.getName())).replaceAll("%count%", String.valueOf(count)));
+    }
+
+    if (isDustbin) {
+      if (Main.PublicDustbinEnable) {
+        TextComponent message = new TextComponent(Main.PublicDustbinMessageReminder.replace("%amount%", String.valueOf(Main.DustbinCount)));
+        TextComponent yes = new TextComponent(Main.PublicDustbinMessageButton);
+        yes.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/citem open"));
+        yes.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(Main.PublicDustbinMessageInfo).create()));
+        Player[] players = Bukkit.getServer().getOnlinePlayers().toArray(new Player[0]);
+        for (Player player : players) {
+          player.spigot().sendMessage(message,yes);
+        }
+      }
+
+      if (Main.CleaningTipsEnable) {
+        Bukkit.getServer().broadcastMessage(Main.ClearItemMessageClear.replaceAll("%count%", String.valueOf(Main.WasteTotal)));
+      }
+
+      Main.DustbinCount = 0;
+      Main.WasteTotal = 0;
+    }
+
   }
 
   public static String IncludeWorldAlias(String name) {
@@ -174,7 +182,7 @@ public class tools {
     if (string == null) {
       return false;
     } else {
-      Iterator var2 = list.iterator();
+      Iterator<String> var2 = list.iterator();
 
       String listString;
       do {
@@ -182,7 +190,7 @@ public class tools {
           return false;
         }
 
-        listString = (String)var2.next();
+        listString = var2.next();
       } while(!string.contains(listString));
 
       return true;
@@ -190,10 +198,8 @@ public class tools {
   }
 
   public static void TraversePlayer() {
-    Iterator var0 = Bukkit.getServer().getOnlinePlayers().iterator();
 
-    while(var0.hasNext()) {
-      Player player = (Player)var0.next();
+    for (Player player : Bukkit.getServer().getOnlinePlayers()) {
       initPlayerData(player);
     }
 
