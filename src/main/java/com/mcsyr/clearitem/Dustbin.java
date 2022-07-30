@@ -30,7 +30,6 @@ public class Dustbin {
       ItemStack next = new ItemStack(Material.BOOK);
 
       ItemMeta nextMeta = next.getItemMeta();
-//    TODO BUG?
       assert nextMeta != null;
       nextMeta.setDisplayName(Main.PublicDustbinNextPageName);
       ArrayList<String> nextLore =new ArrayList<>();
@@ -89,7 +88,6 @@ public class Dustbin {
     }
   }
 
-//  TODO 添加页码
   static {
     int Size=Main.PublicDustbinSize;
     int PageSize=Size/54;
