@@ -1,5 +1,5 @@
 # ClearItem
-拥有聊天栏点击打开共享垃圾桶以及翻页垃圾桶的Minecraft服务器轻量级自动清理垃圾桶插件
+拥有聊天栏点击打开共享垃圾桶以及翻页垃圾桶的Minecraft1.12服务器轻量级自动清理垃圾桶插件
 
 ## 垃圾桶清理提示
 ![image](https://user-images.githubusercontent.com/58141387/181935393-7ad64fc7-add3-4869-b07c-9018c1c29e80.png)
