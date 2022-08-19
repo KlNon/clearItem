@@ -16,6 +16,7 @@ public class Main extends JavaPlugin {
   
   public static Boolean DustbinLock = Boolean.FALSE;
 
+
   public static String PublicDustbinPrePageName;
 
   public static String PublicDustbinNextPageName;
@@ -70,7 +71,8 @@ public class Main extends JavaPlugin {
   public static Integer ClearItemTime;
   
   public static List<String> ClearItemWhiteList;
-  
+
+  public static List<String> BlockBlackList;
   public static Integer ClearItemChunkMaxItems;
   
   public static Boolean ClearItemItemFrame;
@@ -113,7 +115,7 @@ public class Main extends JavaPlugin {
   
   public static Map<Player, Inventory> PlayerPrivateDustbin = new HashMap<>();
 
-  public static String Version = "3.1.1";
+  public static String Version = "3.2.1";
 
   public Main() {
   }
@@ -159,6 +161,7 @@ public class Main extends JavaPlugin {
     DropMessageDiscardInOpen = Objects.requireNonNull(Config.getString("Drop.Message.DiscardInOpen")).replaceAll("&", "§");
     ClearItemTime = Config.getInt("ClearItem.Time");
     ClearItemChunkMaxItems = Config.getInt("ClearItem.ChunkMaxItems");
+    BlockBlackList = Config.getStringList("ClearItem.BlockBlackList");
     ClearItemWhiteList = Config.getStringList("ClearItem.WhiteList");
     ClearItemItemFrame = Config.getBoolean("ClearItem.ItemFrame");
     ClearItemBoat = Config.getBoolean("ClearItem.Boat");

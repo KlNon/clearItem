@@ -64,6 +64,18 @@ public class command implements CommandExecutor {
             sender.sendMessage("§b[ClearItem] §fType: " + player.getItemInHand().getType().name());
             return true;
           }
+
+          if (args[0].equalsIgnoreCase("clear")) {
+            sender.sendMessage("§b[ClearItem] §f世界清理中");
+            tools.clearWorld();
+            return true;
+          }
+
+          if (args[0].equalsIgnoreCase("clean")) {
+            sender.sendMessage("§b[ClearItem] §f公共垃圾桶清理中");
+            tools.cleanPublicDustbin();
+            return true;
+          }
         }
       }
 
@@ -74,6 +86,7 @@ public class command implements CommandExecutor {
         sender.sendMessage("§b[ClearItem] §f插件重载成功!");
         return true;
       }
+
 
       this.showHelp(sender);
     }
@@ -102,6 +115,11 @@ public class command implements CommandExecutor {
       sender.sendMessage(Main.PublicDustbinName + " §f重载插件");
       sender.sendMessage(Main.PublicDustbinName + " §f§l/citem reload");
       sender.sendMessage("§7");
+      sender.sendMessage(Main.PublicDustbinName + " §f手动清理");
+      sender.sendMessage(Main.PublicDustbinName + " §f§l/citem clear");
+      sender.sendMessage("§7");
+      sender.sendMessage(Main.PublicDustbinName + " §f清空垃圾桶");
+      sender.sendMessage(Main.PublicDustbinName + " §f§l/citem clean");
     }
 
     sender.sendMessage("§7======================§b" + Main.Version + "§7======================");

@@ -1,7 +1,7 @@
 name: ClearItem
 main: com.mcsyr.clearitem.Main
 softdepend: [PlaceholderAPI]
-version: 3.1.1-SNAPSHOT
+version: 3.2.1-SNAPSHOT
 author: Luo_ma & KlNon
 commands:
    clearitem:

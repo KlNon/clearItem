@@ -52,6 +52,13 @@ public class tools {
         tools.CheckPlayerDropLock();
       },200L, 20L);
   }
+
+  public static void cleanPublicDustbin(){
+    if (Main.PublicDustbinEnable) {
+      Dustbin.ClearDustbin();
+      Bukkit.getServer().broadcastMessage(Main.PublicDustbinMessageClear);
+    }
+  }
   public static void CheckPlayerDropLock() {
     long date = (new Date()).getTime();
     long playerDate;
@@ -87,7 +94,7 @@ public class tools {
       if (ent instanceof Item) {
         Item item = (Item) ent;
         if (!Main.ClearItemWhiteList.contains(item.getItemStack().getType().name())) {
-          if (Dustbin.addItem(item.getItemStack())) {
+          if (!Main.BlockBlackList.contains(item.getItemStack().getType().name())&&Dustbin.addItem(item.getItemStack())) {
             ++DustbinCount;
           }
           ++count;
