@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -140,24 +141,29 @@ public class Event implements Listener {
 //  上下页(标题相同)
   public void onPageClick(InventoryClickEvent event){
     if(event.getView().getTitle().startsWith(Main.PublicDustbinName)){
-      if(event.getCurrentItem().getItemMeta().getDisplayName().equals(Main.PublicDustbinPrePageName)){
-        event.setCancelled(true);
-        int count=Integer.parseInt(event.getView().getTitle().substring(event.getView().getTitle().length()-2,event.getView().getTitle().length()-1))-1;
-        if(count>0){
-          count--;
+      if(event.getCurrentItem().hasItemMeta() && event.getCurrentItem().getItemMeta().hasDisplayName()){
+        if(event.getCurrentItem().getItemMeta().getDisplayName().equals(Main.PublicDustbinPrePageName)){
+          event.setCancelled(true);
+          int count=Integer.parseInt(event.getView().getTitle().substring(event.getView().getTitle().length()-2,event.getView().getTitle().length()-1))-1;
+          if(count>0){
+            count--;
+          }else {
+            count=Dustbin.DustbinList.size()-1;
+          }
+          Player player = (Player) event.getWhoClicked();
+          player.closeInventory();
+          player.openInventory(Dustbin.DustbinList.get(count));
+        }else if(event.getCurrentItem().getItemMeta().getDisplayName().equals(Main.PublicDustbinNextPageName)){
+          event.setCancelled(true);
+          int count=Integer.parseInt(event.getView().getTitle().substring(event.getView().getTitle().length()-2,event.getView().getTitle().length()-1))-1;
+          if(count<Dustbin.DustbinList.size()-1){
+            count++;
+          }else
+            count=0;
+          Player player = (Player) event.getWhoClicked();
+          player.closeInventory();
+          player.openInventory(Dustbin.DustbinList.get(count));
         }
-        Player player = (Player) event.getWhoClicked();
-        player.closeInventory();
-        player.openInventory(Dustbin.DustbinList.get(count));
-      }else if(event.getCurrentItem().getItemMeta().getDisplayName().equals(Main.PublicDustbinNextPageName)){
-        event.setCancelled(true);
-        int count=Integer.parseInt(event.getView().getTitle().substring(event.getView().getTitle().length()-2,event.getView().getTitle().length()-1))-1;
-        if(count<Dustbin.DustbinList.size()-1){
-          count++;
-        }
-        Player player = (Player) event.getWhoClicked();
-        player.closeInventory();
-        player.openInventory(Dustbin.DustbinList.get(count));
       }
     }
   }

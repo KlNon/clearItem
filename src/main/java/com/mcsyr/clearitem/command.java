@@ -15,7 +15,6 @@ public class command implements CommandExecutor {
         Player player = (Player)sender;
         if (args[0].equalsIgnoreCase("open")) {
           if (Main.PublicDustbinEnable) {
-
             ((Player)sender).openInventory(Dustbin.DustbinList.get(0));
             sender.sendMessage(Main.PublicDustbinAction + Main.PublicDustbinName);
           } else {
@@ -74,8 +73,23 @@ public class command implements CommandExecutor {
           if (args[0].equalsIgnoreCase("clean")) {
             sender.sendMessage("§b[ClearItem] §f公共垃圾桶清理中");
             tools.cleanPublicDustbin();
+            Dustbin.page();
             return true;
           }
+        }
+      }else if(args.length==2){
+        Player player = (Player)sender;
+        if (args[0].equalsIgnoreCase("open")) {
+          int num=Integer.parseInt(args[1]);
+          if(Character.isDigit(num)&&Main.PublicDustbinEnable){
+
+            player.openInventory(Dustbin.DustbinList.get((num-1)%5));
+            sender.sendMessage(Main.PublicDustbinAction + Main.PublicDustbinName);
+          }else {
+            sender.sendMessage( "公共垃圾箱已被服务器禁用!");
+          }
+
+          return true;
         }
       }
 
@@ -101,6 +115,9 @@ public class command implements CommandExecutor {
     sender.sendMessage("§7");
     sender.sendMessage(Main.PublicDustbinName + " §f打开公共垃圾箱");
     sender.sendMessage(Main.PublicDustbinName + " §f§l/citem open");
+    sender.sendMessage("§7");
+    sender.sendMessage(Main.PublicDustbinName + " §f打开公共垃圾箱具体页");
+    sender.sendMessage(Main.PublicDustbinName + " §f§l/citem open [num]");
     sender.sendMessage("§7");
     sender.sendMessage(Main.PublicDustbinName + " §f打开私人垃圾箱");
     sender.sendMessage(Main.PublicDustbinName + " §f§l/citem discard");

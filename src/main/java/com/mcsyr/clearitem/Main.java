@@ -115,7 +115,7 @@ public class Main extends JavaPlugin {
   
   public static Map<Player, Inventory> PlayerPrivateDustbin = new HashMap<>();
 
-  public static String Version = "3.2.1";
+  public static String Version = "3.2.2";
 
   public Main() {
   }
