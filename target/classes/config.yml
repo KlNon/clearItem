@@ -120,6 +120,37 @@ ClearItem:
     # 当一个区块掉落物超额时的清理提示(会受到垃圾白名单影响)
     ClearChunkMaxItems: "&4[警告] &b世界：%world%  &e坐标：%X% %Y% %Z%  &4附近出现大量掉落物，系统清理完毕&d(请勿乱扔垃圾)"
 
+ShareInv:
+  Enable: true
+  # 箱子名称
+  Name: "&3&l共享空间"
+  # 箱大小
+  Size: 54
+  # 打开动作
+  Action: "&b打开了"
+  # 上一页页码的文字
+  PrePageName: "&9上一页"
+  # 上一页页码的描述
+  PrePageDes: "&9点此上一页"
+  # 下一页页码的文字
+  NextPageName: "&9下一页"
+  # 下一页页码的描述
+  NextPageDes: "&9点此下一页"
+  #  清理时间(默认30分钟)
+  ClearTime: 1800
+  # 清理前的消息
+  Message:
+    ClearMessagePre:
+      "&c[警告] &6共享空间将会在 &e%time%秒 &6后清理，请及时取走重要物品!"
+    ClearMessageStart:
+      "&c[警告] &6共享空间正在清理. 注意安全!"
+    ClearMessageEnd:
+      "&c[警告] &6共享空间清理完毕!"
+    ButtonMessage:
+      "点此打开共享空间"
+    ButtonInfo:
+      "这是一个共享空间"
+
 
 # 清理垃圾提示方式
 CleaningTips:

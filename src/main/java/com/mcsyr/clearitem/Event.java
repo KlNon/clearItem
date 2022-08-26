@@ -6,7 +6,6 @@ import java.util.Objects;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -79,33 +78,35 @@ public class Event implements Listener {
       itemStack.getType();
       if (!"AIR".equals(itemStack.getType().name())) {
         String Title = event.getView().getTitle();
-        if (Title.equals(Main.PublicDustbinName) && Main.DustbinLock) {
-          event.getWhoClicked().sendMessage(Main.PublicDustbinName + "垃圾箱已被锁住，请稍等1秒后操作...");
-          event.setCancelled(true);
-        } else if (Main.DropEnable && Title.equals(Main.PrivateDustbinName)) {
-          String name = Objects.requireNonNull(itemStack.getItemMeta()).getDisplayName();
-          if (tools.isIncludedString(Main.PrivateDustbinWhiteListName, name)) {
+        if(event.getView().getTitle()!=null){
+          if (Title.equals(Main.PublicDustbinName) && Main.DustbinLock) {
+            event.getWhoClicked().sendMessage(Main.PublicDustbinName + "垃圾箱已被锁住，请稍等1秒后操作...");
             event.setCancelled(true);
-          }
-
-          if (itemStack.getItemMeta() == null) {
-            return;
-          }
-
-          List<String> lores = itemStack.getItemMeta().getLore();
-          if (lores == null) {
-            return;
-          }
-
-          for (String lore : lores) {
-            if (tools.isIncludedString(Main.PrivateDustbinWhiteListLore, lore)) {
+          } else if (Main.DropEnable && Title.equals(Main.PrivateDustbinName)) {
+            String name = Objects.requireNonNull(itemStack.getItemMeta()).getDisplayName();
+            if (tools.isIncludedString(Main.PrivateDustbinWhiteListName, name)) {
               event.setCancelled(true);
+            }
+
+            if (itemStack.getItemMeta() == null) {
               return;
             }
+
+            List<String> lores = itemStack.getItemMeta().getLore();
+            if (lores == null) {
+              return;
+            }
+
+            for (String lore : lores) {
+              if (tools.isIncludedString(Main.PrivateDustbinWhiteListLore, lore)) {
+                event.setCancelled(true);
+                return;
+              }
+            }
           }
-        }
-        else {
-          onPageClick(event);
+          else {
+            onPageClick(event);
+          }
         }
       }
     }
@@ -113,26 +114,28 @@ public class Event implements Listener {
 
   @EventHandler
   public void onInventoryClose(InventoryCloseEvent event) {
-    if (Main.PrivateDustbinEnable && event.getView().getTitle().equals(Main.PrivateDustbinName)) {
-      Player player = (Player)event.getPlayer();
-      Inventory inventory = Main.PlayerPrivateDustbin.get(player);
-      ItemStack[] itemStacks = inventory.getContents();
-      int clear = 0;
-      int preserve = 0;
+    if(event.getView().getTitle()!=null) {
+      if (Main.PrivateDustbinEnable && event.getView().getTitle().equals(Main.PrivateDustbinName)) {
+        Player player = (Player) event.getPlayer();
+        Inventory inventory = Main.PlayerPrivateDustbin.get(player);
+        ItemStack[] itemStacks = inventory.getContents();
+        int clear = 0;
+        int preserve = 0;
 
-      for (ItemStack itemStack : itemStacks) {
-        if (itemStack != null) {
-          if (Dustbin.addItem(itemStack)) {
-            inventory.remove(itemStack);
-            ++clear;
-          } else {
-            ++preserve;
+        for (ItemStack itemStack : itemStacks) {
+          if (itemStack != null) {
+            if (Dustbin.addItem(itemStack)) {
+              inventory.remove(itemStack);
+              ++clear;
+            } else {
+              ++preserve;
+            }
           }
         }
-      }
 
-      if (clear > 0 || preserve > 0) {
-        player.sendMessage(Main.PrivateDustbinMessageClear.replaceAll("%clear%", String.valueOf(clear)).replaceAll("%preserve%", String.valueOf(preserve)));
+        if (clear > 0 || preserve > 0) {
+          player.sendMessage(Main.PrivateDustbinMessageClear.replaceAll("%clear%", String.valueOf(clear)).replaceAll("%preserve%", String.valueOf(preserve)));
+        }
       }
     }
 
@@ -141,7 +144,7 @@ public class Event implements Listener {
 //  上下页(标题相同)
   public void onPageClick(InventoryClickEvent event){
     if(event.getView().getTitle().startsWith(Main.PublicDustbinName)){
-      if(event.getCurrentItem().hasItemMeta() && event.getCurrentItem().getItemMeta().hasDisplayName()){
+      if(Objects.requireNonNull(event.getCurrentItem()).hasItemMeta() && Objects.requireNonNull(event.getCurrentItem().getItemMeta()).hasDisplayName()){
         if(event.getCurrentItem().getItemMeta().getDisplayName().equals(Main.PublicDustbinPrePageName)){
           event.setCancelled(true);
           int count=Integer.parseInt(event.getView().getTitle().substring(event.getView().getTitle().length()-2,event.getView().getTitle().length()-1))-1;
@@ -163,6 +166,31 @@ public class Event implements Listener {
           Player player = (Player) event.getWhoClicked();
           player.closeInventory();
           player.openInventory(Dustbin.DustbinList.get(count));
+        }
+      }
+    }else if(event.getView().getTitle().startsWith(Main.ShareName)){
+      if(Objects.requireNonNull(event.getCurrentItem()).hasItemMeta() && Objects.requireNonNull(event.getCurrentItem().getItemMeta()).hasDisplayName()){
+        if(event.getCurrentItem().getItemMeta().getDisplayName().equals(Main.SharePre)){
+          event.setCancelled(true);
+          int count=Integer.parseInt(event.getView().getTitle().substring(event.getView().getTitle().length()-2,event.getView().getTitle().length()-1))-1;
+          if(count>0){
+            count--;
+          }else {
+            count=Share.ShareList.size()-1;
+          }
+          Player player = (Player) event.getWhoClicked();
+          player.closeInventory();
+          player.openInventory(Share.ShareList.get(count));
+        }else if(event.getCurrentItem().getItemMeta().getDisplayName().equals(Main.ShareNext)){
+          event.setCancelled(true);
+          int count=Integer.parseInt(event.getView().getTitle().substring(event.getView().getTitle().length()-2,event.getView().getTitle().length()-1))-1;
+          if(count<Share.ShareList.size()-1){
+            count++;
+          }else
+            count=0;
+          Player player = (Player) event.getWhoClicked();
+          player.closeInventory();
+          player.openInventory(Share.ShareList.get(count));
         }
       }
     }

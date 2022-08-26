@@ -1,10 +1,56 @@
 name: ClearItem
 main: com.mcsyr.clearitem.Main
 softdepend: [PlaceholderAPI]
-version: 3.2.2-SNAPSHOT
-author: Luo_ma & KlNon
+version: 3.3.0-SNAPSHOT
+authors: [Luo_ma,KlNon]
+description: Clear Items in the world and share your items with your friends
 commands:
-   clearitem:
+   clearItem:
      aliases: [citem, ci]
-     usage: /citem open
+     usage: "§b[clearItem]/<command> <message>§6或使用§b/citem help §6查询详细帮助"
      description: 打开公共垃圾桶
+permissions:
+  clearItem.*:
+    description: "All permission of this plugin"
+    children:
+      clearItem.open: true
+      clearItem.discard: true
+      clearItem.share: false
+      clearItem.drop: true
+      clearItem.help: true
+      clearItem.Op.Command.type: false
+      clearItem.Op.Command.reload: false
+      clearItem.Op.Command.PublicClear: false
+      clearItem.Op.Command.PublicClean: false
+      clearItem.Op.Command.ShareClean: false
+  clearItem.open:
+    description: open bin
+    default: true
+  clearItem.share:
+    description: open the shared space
+    default: true
+  clearItem.drop:
+    description: stop drop item
+    default: true
+  clearItem.discard:
+    description: open private bin
+    default: true
+  clearItem.help:
+    description: help of ClearItem
+    default: true
+
+  clearItem.Op.Command.type:
+    description: show the item type which in your hand
+    default: op
+  clearItem.Op.Command.reload:
+    description: reload the clearItem plugin
+    default: op
+  clearItem.Op.Command.PublicClear:
+    description: clear all the items in all world
+    default: op
+  clearItem.Op.Command.PublicClean:
+    description: clean the PublicInventory
+    default: op
+  clearItem.Op.Command.ShareClean:
+    description: clean the ShareInventory
+    default: op

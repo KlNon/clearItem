@@ -3,10 +3,14 @@ package com.mcsyr.clearitem;
 import java.util.*;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Main extends JavaPlugin {
 
@@ -102,7 +106,7 @@ public class Main extends JavaPlugin {
   public static String ClearItemMessageClearChunkMaxItems;
   
   public static Boolean CleaningTipsEnable;
-  
+
   public static Integer time = 0;
   
   public static Integer WasteTotal = 0;
@@ -115,8 +119,41 @@ public class Main extends JavaPlugin {
   
   public static Map<Player, Inventory> PlayerPrivateDustbin = new HashMap<>();
 
-  public static String Version = "3.2.2";
+  public static Boolean ShareEnable;
 
+  public static String ShareAction;
+
+  public static String SharePre;
+
+  public static String SharePreInfo;
+
+  public static Integer ShareTime = 0;
+
+  public static String ShareNext;
+
+  public static String ShareNextInfo;
+
+  public static String ShareName;
+
+  public static Integer ShareSize;
+
+  public static Integer ShareClearTime;
+
+  public static String ShareClearMessagePre;
+
+  public static String ShareClearMessageStart;
+
+  public static String ShareClearMessageEnd;
+
+  public static String ShareButtonMessage;
+
+  public static String ShareButtonInfo;
+
+  public static String Version = "3.3.0";
+
+  public static List<String> Arg1_TabCommand= new ArrayList<>(Arrays.asList("open","share","discard","drop"));
+
+  public static List<String> Arg1_Op_TabCommand= new ArrayList<>(Arrays.asList("type","reload","PublicClear","PublicClean","ShareClean"));
   public Main() {
   }
 
@@ -126,6 +163,7 @@ public class Main extends JavaPlugin {
     Bukkit.getServer().getConsoleSender().sendMessage("§b[ClearItem] 异步清理垃圾 插件启动");
     Bukkit.getPluginManager().registerEvents(new Event(), this);
     Objects.requireNonNull(Bukkit.getPluginCommand("clearitem")).setExecutor(new command());
+    Objects.requireNonNull(Bukkit.getPluginCommand("clearitem")).setTabCompleter(new command());
     loadConfig();
     tools.Scheduler();
     tools.TraversePlayer();
@@ -161,7 +199,6 @@ public class Main extends JavaPlugin {
     DropMessageDiscardInOpen = Objects.requireNonNull(Config.getString("Drop.Message.DiscardInOpen")).replaceAll("&", "§");
     ClearItemTime = Config.getInt("ClearItem.Time");
     ClearItemChunkMaxItems = Config.getInt("ClearItem.ChunkMaxItems");
-    BlockBlackList = Config.getStringList("ClearItem.BlockBlackList");
     ClearItemWhiteList = Config.getStringList("ClearItem.WhiteList");
     ClearItemItemFrame = Config.getBoolean("ClearItem.ItemFrame");
     ClearItemBoat = Config.getBoolean("ClearItem.Boat");
@@ -177,5 +214,21 @@ public class Main extends JavaPlugin {
     ClearItemMessageClearWorld = Objects.requireNonNull(Config.getString("ClearItem.Message.ClearWorld")).replaceAll("&", "§");
     ClearItemMessageClearChunkMaxItems = Objects.requireNonNull(Config.getString("ClearItem.Message.ClearChunkMaxItems")).replaceAll("&", "§");
     CleaningTipsEnable = Config.getBoolean("CleaningTips.Enable");
+    BlockBlackList = Config.getStringList("ClearItem.BlockBlackList");
+    ShareEnable = Config.getBoolean("ShareInv.Enable");
+    ShareAction = Objects.requireNonNull(Config.getString("ShareInv.Action")).replaceAll("&", "§");
+    ShareName= Objects.requireNonNull(Config.getString("ShareInv.Name")).replaceAll("&", "§");
+    ShareSize=Config.getInt("ShareInv.Size");
+    SharePre = Objects.requireNonNull(Config.getString("ShareInv.PrePageName")).replaceAll("&", "§");
+    SharePreInfo = Objects.requireNonNull(Config.getString("ShareInv.PrePageDes")).replaceAll("&", "§");
+    ShareNext= Objects.requireNonNull(Config.getString("ShareInv.NextPageName")).replaceAll("&", "§");
+    ShareNextInfo = Objects.requireNonNull(Config.getString("ShareInv.NextPageDes")).replaceAll("&", "§");
+    ShareClearTime = Config.getInt("ShareInv.ClearTime");
+    ShareClearMessagePre= Objects.requireNonNull(Config.getString("ShareInv.Message.ClearMessagePre")).replaceAll("&", "§");
+    ShareClearMessageStart= Objects.requireNonNull(Config.getString("ShareInv.Message.ClearMessageStart")).replaceAll("&", "§");
+    ShareClearMessageEnd= Objects.requireNonNull(Config.getString("ShareInv.Message.ClearMessageEnd")).replaceAll("&", "§");
+    ShareButtonMessage= Objects.requireNonNull(Config.getString("ShareInv.Message.ButtonMessage")).replaceAll("&", "§");
+    ShareButtonInfo= Objects.requireNonNull(Config.getString("ShareInv.Message.ButtonInfo")).replaceAll("&", "§");
+
   }
 }
