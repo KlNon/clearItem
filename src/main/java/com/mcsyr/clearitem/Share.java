@@ -77,6 +77,7 @@ public class Share {
             ShareList.add(Bukkit.createInventory((InventoryHolder) null, Size, Main.ShareName + "第" + 1 + "页"));
             ShareLarge++;
         }
-        page();
+        if(PageSize>1)
+            page();
     }
 }

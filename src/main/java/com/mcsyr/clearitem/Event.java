@@ -44,28 +44,29 @@ public class Event implements Listener {
   @EventHandler
   public void onItemSpawn(ItemSpawnEvent event) {
     List<Entity> Entities = event.getEntity().getNearbyEntities(16.0, 32.0, 16.0);
-    if (Entities.size() >= Main.ClearItemChunkMaxItems) {
-      List<LivingEntity> worldEntities = event.getEntity().getWorld().getLivingEntities();
+      if (Entities.size() >= Main.ClearItemChunkMaxItems) {
+        List<LivingEntity> worldEntities = event.getEntity().getWorld().getLivingEntities();
 
-      for (Entity ent : Entities) {
-        tools.clearEntityItem(ent);
-      }
-
-      Player player = null;
-
-      for (LivingEntity worldEntity : worldEntities) {
-        if (worldEntity instanceof Player) {
-          player = (Player) worldEntity;
-          break;
+        for (Entity ent : Entities) {
+          tools.clearEntityItem(ent);
         }
+
+        Player player = null;
+
+        for (LivingEntity worldEntity : worldEntities) {
+          if (worldEntity instanceof Player) {
+            player = (Player) worldEntity;
+            break;
+          }
+        }
+
+        String message = Main.ClearItemMessageClearChunkMaxItems.replace("%world%", "%multiverse_world_alias%");
+        message = PlaceholderAPI.setPlaceholders(player, message);
+        DecimalFormat df = new DecimalFormat("0.0 ");
+        message = message.replace("%X%", df.format(event.getLocation().getX())).replace("%Y%", df.format(event.getLocation().getY())).replace("%Z%", df.format(event.getLocation().getZ()));
+        Bukkit.getServer().broadcastMessage(message);
       }
 
-      String message = Main.ClearItemMessageClearChunkMaxItems.replace("%world%", "%multiverse_world_alias%");
-      message = PlaceholderAPI.setPlaceholders(player, message);
-      DecimalFormat df = new DecimalFormat("0.0 ");
-      message = message.replace("%X%", df.format(event.getLocation().getX())).replace("%Y%", df.format(event.getLocation().getY())).replace("%Z%", df.format(event.getLocation().getZ()));
-      Bukkit.getServer().broadcastMessage(message);
-    }
 
   }
 

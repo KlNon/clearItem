@@ -104,6 +104,7 @@ public class Dustbin {
             DustbinList.add(Bukkit.createInventory((InventoryHolder) null, Size, Main.PublicDustbinName + "第" + 1 + "页"));
             binSize++;
         }
-        page();
+        if(PageSize>1)
+            page();
     }
 }
